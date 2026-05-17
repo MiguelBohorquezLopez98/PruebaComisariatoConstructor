@@ -1,5 +1,6 @@
 using GestorSolicitudes.API.DTOs;
 using GestorSolicitudes.API.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GestorSolicitudes.API.Controllers;
@@ -23,5 +24,15 @@ public class AuthController : ControllerBase
         if (resultado == null)
             return Unauthorized(new { message = "Credenciales incorrectas" });
         return Ok(resultado);
+    }
+
+    [HttpPost("logout")]
+    [Authorize]
+    public async Task<IActionResult> Logout()
+    {
+        var nombreUsuario = User.Identity?.Name;
+        if (nombreUsuario == null) return Unauthorized();
+        await _authService.LogoutAsync(nombreUsuario);
+        return Ok(new { message = "Sesión cerrada correctamente" });
     }
 }

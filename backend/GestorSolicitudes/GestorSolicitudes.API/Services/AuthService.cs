@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using GestorSolicitudes.API.Data;
 using GestorSolicitudes.API.DTOs;
+using Microsoft.EntityFrameworkCore;
 using GestorSolicitudes.API.Services.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 
@@ -29,23 +30,38 @@ public class AuthService : IAuthService
             _logger.LogWarning("Login fallido: {Usuario}", request.NombreUsuario);
             return null;
         }
+        usuario.TokenVersion++;
+        _db.SaveChanges();
         _logger.LogInformation("Login exitoso: {Usuario}", request.NombreUsuario);
         return new LoginResponseDto
         {
-            Token = GenerarToken(usuario.NombreUsuario, usuario.Rol),
+            Token = GenerarToken(usuario.NombreUsuario, usuario.Rol, usuario.TokenVersion),
             Usuario = usuario.NombreUsuario,
             Rol = usuario.Rol
         };
     }
 
-    private string GenerarToken(string nombreUsuario, string rol)
+    public async Task LogoutAsync(string nombreUsuario)
+    {
+        var usuario = await _db.Usuarios.FirstOrDefaultAsync(
+            u => u.NombreUsuario == nombreUsuario);
+        if (usuario != null)
+        {
+            usuario.TokenVersion++;
+            await _db.SaveChangesAsync();
+            _logger.LogInformation("Logout: {Usuario}", nombreUsuario);
+        }
+    }
+
+    private string GenerarToken(string nombreUsuario, string rol, int tokenVersion)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         var claims = new[]
         {
             new Claim(ClaimTypes.Name, nombreUsuario),
-            new Claim(ClaimTypes.Role, rol)
+            new Claim(ClaimTypes.Role, rol),
+            new Claim("token_version", tokenVersion.ToString())
         };
         var token = new JwtSecurityToken(
             issuer: _config["Jwt:Issuer"],

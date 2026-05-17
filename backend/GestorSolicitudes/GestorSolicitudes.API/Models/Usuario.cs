@@ -16,4 +16,6 @@ public class Usuario
     [Required]
     [MaxLength(20)]
     public string Rol { get; set; } = string.Empty;
+
+    public int TokenVersion { get; set; } = 1;
 }

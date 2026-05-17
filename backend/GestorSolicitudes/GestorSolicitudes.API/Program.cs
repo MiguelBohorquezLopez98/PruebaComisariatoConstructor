@@ -45,7 +45,10 @@ builder.Services.AddCors(options => {
             .AllowAnyHeader().AllowAnyMethod());
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.ReferenceHandler =
+            System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
 builder.Services.AddEndpointsApiExplorer();
 
 // Swagger con soporte Bearer JWT
@@ -78,6 +81,7 @@ app.UseSwaggerUI();
 app.UseCors("AllowAngular");
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<TokenVersionMiddleware>();
 
 // Health check
 app.MapGet("/health", () => Results.Ok(new {
