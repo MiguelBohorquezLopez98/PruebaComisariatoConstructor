@@ -1,9 +1,117 @@
-.login-container {
+.login-wrapper {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.login-brand {
+  flex: 0 0 42%;
+  background: linear-gradient(160deg, #1565c0 0%, #0d47a1 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  padding: 48px 40px;
+
+  .brand-icon {
+    font-size: 72px;
+    width: 72px;
+    height: 72px;
+    margin-bottom: 28px;
+    opacity: 0.95;
+  }
+
+  .brand-title {
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0 0 12px;
+    text-align: center;
+    letter-spacing: -0.3px;
+  }
+
+  .brand-subtitle {
+    font-size: 15px;
+    opacity: 0.75;
+    text-align: center;
+    max-width: 260px;
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+.login-form-panel {
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: #f5f5f5;
+  background: #ffffff;
+  padding: 48px 40px;
 }
-.login-card { width: 400px; padding: 16px; }
-.full-width { width: 100%; margin-bottom: 16px; }
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+
+  h2 {
+    margin: 0 0 6px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a1a2e;
+  }
+
+  .form-subtitle {
+    color: #757575;
+    margin: 0 0 32px;
+    font-size: 14px;
+  }
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.submit-btn {
+  margin-top: 8px;
+  height: 46px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  border-radius: 4px;
+
+  mat-spinner {
+    display: inline-block;
+  }
+}
+
+@media (max-width: 700px) {
+  .login-wrapper {
+    flex-direction: column;
+  }
+
+  .login-brand {
+    flex: 0 0 180px;
+    padding: 24px;
+
+    .brand-icon {
+      font-size: 40px;
+      width: 40px;
+      height: 40px;
+      margin-bottom: 12px;
+    }
+
+    .brand-title {
+      font-size: 20px;
+    }
+
+    .brand-subtitle {
+      display: none;
+    }
+  }
+
+  .login-form-panel {
+    padding: 32px 24px;
+    align-items: flex-start;
+  }
+}

@@ -9,22 +9,26 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e8ecf0;
 
   h1 {
     margin: 0;
-    font-size: 26px;
-    font-weight: 500;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a1a2e;
   }
 }
 
 .page-title-group {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 .filtros-card {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  border-radius: 4px !important;
 }
 
 .filtros-form {
@@ -71,6 +75,7 @@
 
 .table-card {
   overflow: hidden;
+  border-radius: 4px !important;
 }
 
 .table-responsive {
@@ -85,12 +90,12 @@
   white-space: nowrap;
 }
 
-.fila-critica {
-  background-color: #fff3e0;
+.fila-critica td {
+  background-color: #fff8f0 !important;
 }
 
-.fila-vencida {
-  background-color: #fce4ec;
+.fila-vencida td {
+  background-color: #fce4ec !important;
 }
 
 .chip-prioridad {

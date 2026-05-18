@@ -26,6 +26,8 @@ html {
 body {
   margin: 0;
   font-family: Roboto, sans-serif;
+  background-color: #f4f6f9;
+  color: #1a1a2e;
 }
 
 /* Reglas visuales requeridas por el documento */
@@ -65,6 +67,15 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e8ecf0;
+
+  h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: #1a1a2e;
+  }
 }
 .loading-center {
   display: flex;
@@ -94,6 +105,12 @@ body {
 }
 .full-width {
   width: 100%;
+}
+
+/* Hover en filas de tabla */
+tr.mat-mdc-row:hover td {
+  background-color: #f0f4ff !important;
+  transition: background-color 0.15s ease;
 }
 
 /* Dashboard */

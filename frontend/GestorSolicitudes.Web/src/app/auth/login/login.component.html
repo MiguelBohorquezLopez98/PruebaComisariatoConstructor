@@ -1,45 +1,51 @@
-<div class="login-container">
-  <mat-card class="login-card">
-    <mat-card-header>
-      <mat-card-title>Gestor de Solicitudes</mat-card-title>
-      <mat-card-subtitle>Inicia sesion para continuar</mat-card-subtitle>
-    </mat-card-header>
+<div class="login-wrapper">
+  <div class="login-brand">
+    <mat-icon class="brand-icon">business_center</mat-icon>
+    <h1 class="brand-title">Gestor de Solicitudes</h1>
+    <p class="brand-subtitle">Sistema de gestión de solicitudes internas</p>
+  </div>
 
-    <mat-card-content>
+  <div class="login-form-panel">
+    <div class="login-card">
+      <h2>Iniciar sesión</h2>
+      <p class="form-subtitle">Ingresa tus credenciales para continuar</p>
+
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Usuario</mat-label>
-          <input matInput formControlName="nombreUsuario" placeholder="admin" />
+          <mat-icon matPrefix>person_outline</mat-icon>
+          <input matInput formControlName="nombreUsuario" placeholder="admin" autocomplete="username" />
           @if (form.get('nombreUsuario')?.hasError('required')) {
             <mat-error>El usuario es obligatorio</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Contrasena</mat-label>
-          <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" />
-          <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+          <mat-label>Contraseña</mat-label>
+          <mat-icon matPrefix>lock_outline</mat-icon>
+          <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" autocomplete="current-password" />
+          <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button" [attr.aria-label]="'Mostrar contraseña'">
             <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
           @if (form.get('password')?.hasError('required')) {
-            <mat-error>La contrasena es obligatoria</mat-error>
+            <mat-error>La contraseña es obligatoria</mat-error>
           }
         </mat-form-field>
 
         <button
-          mat-raised-button
+          mat-flat-button
           color="primary"
-          class="full-width"
+          class="full-width submit-btn"
           type="submit"
           [disabled]="loading || form.invalid"
         >
           @if (loading) {
             <mat-spinner diameter="20"></mat-spinner>
           } @else {
-            Iniciar Sesion
+            Iniciar Sesión
           }
         </button>
       </form>
-    </mat-card-content>
-  </mat-card>
+    </div>
+  </div>
 </div>
