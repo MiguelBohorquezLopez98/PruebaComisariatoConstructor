@@ -102,8 +102,8 @@ http://localhost
 
 | Usuario | Contraseña | Rol | Permisos |
 |---|---|---|---|
-| `admin` | `Admin1234!` | Administrador | Ver, crear, editar solicitudes y cambiar estados |
-| `operador` | `Operador1234!` | Operador | Ver solicitudes y cambiar estado de las que tiene asignadas |
+| `admin` | `Admin123*` | Administrador | Ver, crear, editar solicitudes y cambiar estados |
+| `operador` | `Operador123*` | Operador | Ver solicitudes y cambiar estado de las que tiene asignadas |
 
 > Los usuarios se crean automáticamente en la primera ejecución si la base de datos está vacía.
 

@@ -116,13 +116,13 @@ using (var scope = app.Services.CreateScope())
             new GestorSolicitudes.API.Models.Usuario
             {
                 NombreUsuario = "admin",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin1234!"),
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123*"),
                 Rol = "admin"
             },
             new GestorSolicitudes.API.Models.Usuario
             {
                 NombreUsuario = "operador",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Operador1234!"),
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Operador123*"),
                 Rol = "operador"
             }
         );
