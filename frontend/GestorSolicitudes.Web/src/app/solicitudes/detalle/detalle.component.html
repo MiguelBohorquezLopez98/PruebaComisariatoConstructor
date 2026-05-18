@@ -24,7 +24,7 @@
           <p class="subtitle">{{ solicitud.titulo }}</p>
         </div>
       </div>
-      @if (solicitud.estado !== EstadoSolicitud.Cerrada && solicitud.estado !== EstadoSolicitud.Cancelada) {
+      @if (esAdmin && solicitud.estado !== EstadoSolicitud.Cerrada && solicitud.estado !== EstadoSolicitud.Cancelada) {
         <button mat-raised-button color="primary" [routerLink]="['/solicitudes/editar', solicitud.id]">
           <mat-icon>edit</mat-icon>
           Editar
@@ -77,7 +77,7 @@
       </mat-card-content>
     </mat-card>
 
-    @if (solicitud.estado !== EstadoSolicitud.Cerrada && solicitud.estado !== EstadoSolicitud.Cancelada) {
+    @if (puedeActualizarEstado() && solicitud.estado !== EstadoSolicitud.Cerrada && solicitud.estado !== EstadoSolicitud.Cancelada) {
       <mat-card class="estado-card">
         <mat-card-header>
           <mat-card-title>Cambiar estado</mat-card-title>

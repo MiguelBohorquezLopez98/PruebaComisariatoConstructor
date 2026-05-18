@@ -21,6 +21,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Subscription } from 'rxjs';
 import { SolicitudService } from '../../core/services/solicitud.service';
+import { AuthService } from '../../core/services/auth.service';
 import {
   Solicitud,
   EstadoSolicitud,
@@ -86,11 +87,15 @@ export class ListadoComponent implements OnInit, OnDestroy {
   private cargandoSub: Subscription | null = null;
   private textoTimer: ReturnType<typeof setTimeout> | null = null;
 
+  readonly esAdmin: boolean;
+
   constructor(
     private service: SolicitudService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
+    private auth: AuthService,
   ) {
+    this.esAdmin = this.auth.esAdmin();
     this.filtros = this.fb.group({
       texto: [''],
       estado: [''],

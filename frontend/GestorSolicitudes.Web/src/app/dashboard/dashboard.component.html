@@ -69,10 +69,12 @@
   }
 
   <div class="actions">
-    <button mat-raised-button color="accent" routerLink="/solicitudes/nueva">
-      <mat-icon>add</mat-icon>
-      Nueva Solicitud
-    </button>
+    @if (esAdmin) {
+      <button mat-raised-button color="accent" routerLink="/solicitudes/nueva">
+        <mat-icon>add</mat-icon>
+        Nueva Solicitud
+      </button>
+    }
     <button mat-stroked-button routerLink="/solicitudes">
       <mat-icon>list</mat-icon>
       Ver todas

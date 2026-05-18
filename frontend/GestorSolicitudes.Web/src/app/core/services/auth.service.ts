@@ -55,4 +55,8 @@ export class AuthService {
     const data = sessionStorage.getItem(this.USER_KEY);
     return data ? JSON.parse(data) : null;
   }
+
+  esAdmin(): boolean {
+    return this.getUsuario()?.rol === 'admin';
+  }
 }

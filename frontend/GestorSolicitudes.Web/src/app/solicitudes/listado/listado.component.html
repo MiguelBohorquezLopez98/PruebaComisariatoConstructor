@@ -6,10 +6,12 @@
       </button>
       <h1>Solicitudes</h1>
     </div>
-    <button mat-raised-button color="primary" routerLink="/solicitudes/nueva">
-      <mat-icon>add</mat-icon>
-      Nueva Solicitud
-    </button>
+    @if (esAdmin) {
+      <button mat-raised-button color="primary" routerLink="/solicitudes/nueva">
+        <mat-icon>add</mat-icon>
+        Nueva Solicitud
+      </button>
+    }
   </div>
 
   <mat-card class="filtros-card">
@@ -115,9 +117,11 @@
               <button mat-icon-button [routerLink]="['/solicitudes', s.id]" matTooltip="Ver detalle">
                 <mat-icon>visibility</mat-icon>
               </button>
-              <button mat-icon-button [routerLink]="['/solicitudes/editar', s.id]" matTooltip="Editar">
-                <mat-icon>edit</mat-icon>
-              </button>
+              @if (esAdmin) {
+                <button mat-icon-button [routerLink]="['/solicitudes/editar', s.id]" matTooltip="Editar">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              }
             </td>
           </ng-container>
 

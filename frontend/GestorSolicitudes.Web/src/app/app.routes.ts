@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
   {
@@ -23,14 +24,14 @@ export const routes: Routes = [
 
   {
     path: 'solicitudes/nueva',
-    canActivate: [authGuard],
+    canActivate: [authGuard, adminGuard],
     loadComponent: () =>
       import('./solicitudes/formulario/formulario.component').then((m) => m.FormularioComponent),
   },
 
   {
     path: 'solicitudes/editar/:id',
-    canActivate: [authGuard],
+    canActivate: [authGuard, adminGuard],
     loadComponent: () =>
       import('./solicitudes/formulario/formulario.component').then((m) => m.FormularioComponent),
   },

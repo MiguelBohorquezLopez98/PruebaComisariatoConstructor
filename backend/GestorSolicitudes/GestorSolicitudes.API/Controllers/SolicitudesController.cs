@@ -37,6 +37,7 @@ public class SolicitudesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> Create([FromBody] CrearSolicitudDto dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -45,6 +46,7 @@ public class SolicitudesController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> Update(
         int id, [FromBody] CrearSolicitudDto dto)
     {
@@ -55,11 +57,19 @@ public class SolicitudesController : ControllerBase
     }
 
     [HttpPatch("{id}/estado")]
+    [Authorize]
     public async Task<IActionResult> CambiarEstado(
         int id, [FromBody] CambiarEstadoDto dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         var usuario = User.Identity?.Name ?? "sistema";
+        if (!User.IsInRole("admin"))
+        {
+            var solicitud = await _service.GetByIdAsync(id);
+            if (solicitud == null) return NotFound(new { message = "Solicitud no encontrada" });
+            if (solicitud.Responsable != usuario)
+                return Forbid();
+        }
         var s = await _service.CambiarEstadoAsync(id, dto, usuario);
         if (s == null) return NotFound(new { message = "Solicitud no encontrada" });
         return Ok(s);

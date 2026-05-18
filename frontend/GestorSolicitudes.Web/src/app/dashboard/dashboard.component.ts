@@ -58,13 +58,16 @@ export class DashboardComponent implements OnInit {
   readonly displayedColumns = ['codigo', 'titulo', 'area', 'prioridad', 'estado', 'vencimiento', 'acciones'];
 
   usuario: { usuario: string; rol: string } | null = null;
+  readonly esAdmin: boolean;
 
   constructor(
     private dashboardService: DashboardService,
     private authService: AuthService,
     private solicitudService: SolicitudService,
     private cdr: ChangeDetectorRef,
-  ) {}
+  ) {
+    this.esAdmin = this.authService.esAdmin();
+  }
 
   ngOnInit(): void {
     this.usuario = this.authService.getUsuario();

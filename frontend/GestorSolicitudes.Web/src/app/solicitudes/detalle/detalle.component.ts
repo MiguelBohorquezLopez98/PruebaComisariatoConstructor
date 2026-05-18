@@ -13,6 +13,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatChipsModule } from '@angular/material/chips';
 import { SolicitudService } from '../../core/services/solicitud.service';
+import { AuthService } from '../../core/services/auth.service';
 import {
   Solicitud,
   EstadoSolicitud,
@@ -48,6 +49,8 @@ export class DetalleComponent implements OnInit {
   loading = true;
   cambiandoEstado = false;
 
+  readonly esAdmin: boolean;
+  readonly usuario: { usuario: string; rol: string } | null;
   readonly EstadoSolicitud = EstadoSolicitud;
   readonly AreaSolicitud = AreaSolicitud;
   readonly PrioridadSolicitud = PrioridadSolicitud;
@@ -65,10 +68,13 @@ export class DetalleComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private service: SolicitudService,
+    private auth: AuthService,
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef,
   ) {
+    this.esAdmin = this.auth.esAdmin();
+    this.usuario = this.auth.getUsuario();
     this.estadoForm = this.fb.group({
       nuevoEstado: ['', Validators.required],
       observacion: [''],
@@ -118,6 +124,12 @@ export class DetalleComponent implements OnInit {
           this.cdr.detectChanges();
         },
       });
+  }
+
+  puedeActualizarEstado(): boolean {
+    if (this.esAdmin) return true;
+    if (!this.solicitud || !this.usuario) return false;
+    return this.solicitud.responsable === this.usuario.usuario;
   }
 
   getAreaLabel(area: AreaSolicitud): string {
