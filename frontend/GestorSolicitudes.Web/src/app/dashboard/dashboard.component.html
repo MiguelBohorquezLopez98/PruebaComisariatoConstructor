@@ -1,0 +1,178 @@
+<div class="dashboard-container">
+  <div class="header">
+    <h1>Dashboard</h1>
+    <div class="header-actions">
+      <span class="welcome-text">Hola, {{ usuario?.usuario }}</span>
+      <button mat-button (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Salir
+      </button>
+    </div>
+  </div>
+
+  @if (loadingResumen) {
+    <div class="loading-center">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  }
+
+  @if (!loadingResumen && errorResumen) {
+    <div class="empty-state">
+      <mat-icon class="icon-error">error_outline</mat-icon>
+      <p>No se pudo cargar el resumen. Verifica la conexion con el servidor.</p>
+      <button mat-stroked-button (click)="cargarResumen()">Reintentar</button>
+    </div>
+  }
+
+  @if (!loadingResumen && resumen) {
+    <div class="cards-grid">
+      <mat-card class="stat-card total">
+        <mat-card-content>
+          <mat-icon>list_alt</mat-icon>
+          <div class="stat-value">{{ resumen.total }}</div>
+          <div class="stat-label">Total</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card abiertas">
+        <mat-card-content>
+          <mat-icon>pending</mat-icon>
+          <div class="stat-value">{{ resumen.abiertas }}</div>
+          <div class="stat-label">Abiertas</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card criticas">
+        <mat-card-content>
+          <mat-icon>priority_high</mat-icon>
+          <div class="stat-value">{{ resumen.criticas }}</div>
+          <div class="stat-label">Criticas</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card vencidas">
+        <mat-card-content>
+          <mat-icon>schedule</mat-icon>
+          <div class="stat-value">{{ resumen.vencidas }}</div>
+          <div class="stat-label">Vencidas</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card cerradas">
+        <mat-card-content>
+          <mat-icon>check_circle</mat-icon>
+          <div class="stat-value">{{ resumen.cerradas }}</div>
+          <div class="stat-label">Cerradas</div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  }
+
+  <div class="actions">
+    <button mat-raised-button color="accent" routerLink="/solicitudes/nueva">
+      <mat-icon>add</mat-icon>
+      Nueva Solicitud
+    </button>
+    <button mat-stroked-button routerLink="/solicitudes">
+      <mat-icon>list</mat-icon>
+      Ver todas
+    </button>
+  </div>
+
+  <div class="solicitudes-section">
+    <h2>Solicitudes recientes</h2>
+
+    @if (loadingSolicitudes) {
+      <div class="loading-center">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    }
+
+    @if (!loadingSolicitudes && errorSolicitudes) {
+      <div class="empty-state">
+        <mat-icon class="icon-error">error_outline</mat-icon>
+        <p>No se pudo cargar las solicitudes.</p>
+        <button mat-stroked-button (click)="cargarSolicitudes()">Reintentar</button>
+      </div>
+    }
+
+    @if (!loadingSolicitudes && !errorSolicitudes && solicitudes.length === 0) {
+      <div class="empty-state">
+        <mat-icon>inbox</mat-icon>
+        <p>No hay solicitudes registradas.</p>
+      </div>
+    }
+
+    @if (!loadingSolicitudes && !errorSolicitudes && solicitudes.length > 0) {
+      <div class="table-responsive">
+        <table mat-table [dataSource]="solicitudes" class="mat-elevation-z2 full-width">
+
+          <ng-container matColumnDef="codigo">
+            <th mat-header-cell *matHeaderCellDef>Código</th>
+            <td mat-cell *matCellDef="let s">{{ s.codigo }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="titulo">
+            <th mat-header-cell *matHeaderCellDef>Título</th>
+            <td mat-cell *matCellDef="let s">
+              <span [matTooltip]="s.descripcion">{{ s.titulo }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="area">
+            <th mat-header-cell *matHeaderCellDef>Área</th>
+            <td mat-cell *matCellDef="let s">{{ getAreaLabel(s.area) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="prioridad">
+            <th mat-header-cell *matHeaderCellDef>Prioridad</th>
+            <td mat-cell *matCellDef="let s">
+              <mat-chip-set>
+                <mat-chip [class]="'chip-prioridad chip-' + s.prioridad">
+                  {{ getPrioridadLabel(s.prioridad) }}
+                </mat-chip>
+              </mat-chip-set>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="estado">
+            <th mat-header-cell *matHeaderCellDef>Estado</th>
+            <td mat-cell *matCellDef="let s">{{ getEstadoLabel(s.estado) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="vencimiento">
+            <th mat-header-cell *matHeaderCellDef>Vencimiento</th>
+            <td mat-cell *matCellDef="let s">
+              {{ s.fechaVencimiento ? (s.fechaVencimiento | date:'dd/MM/yyyy') : '—' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let s">
+              <button mat-icon-button [routerLink]="['/solicitudes', s.id]" matTooltip="Ver detalle">
+                <mat-icon>visibility</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr
+            mat-row
+            *matRowDef="let s; columns: displayedColumns"
+            [class.fila-critica]="esCritica(s)"
+            [class.fila-vencida]="esVencida(s)"
+          ></tr>
+        </table>
+
+        <mat-paginator
+          [length]="totalSolicitudes"
+          [pageSize]="pageSizeSolicitudes"
+          [pageSizeOptions]="[5, 10, 25]"
+          (page)="onPage($event)"
+          showFirstLastButtons
+        ></mat-paginator>
+      </div>
+    }
+  </div>
+</div>

@@ -29,8 +29,18 @@ export class AuthService {
   }
 
   logout(): void {
+    const token = this.getToken();
+    // Limpia la sesión ANTES del HTTP para que el interceptor no entre en loop
     sessionStorage.removeItem(this.TOKEN_KEY);
     sessionStorage.removeItem(this.USER_KEY);
+    if (token) {
+      // Intenta invalidar el token en el servidor (best-effort, no bloquea la navegación)
+      this.http
+        .post(`${environment.apiUrl}/auth/logout`, {}, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .subscribe({ error: () => {} });
+    }
     this.router.navigate(['/login']);
   }
 

@@ -1,0 +1,70 @@
+.page-container {
+  padding: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+
+  h1 {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 500;
+  }
+}
+
+.page-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.loading-center {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.aviso-cerrada {
+  margin-bottom: 16px;
+  background-color: #fff3e0;
+
+  mat-card-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+
+    mat-icon {
+      color: #e65100;
+    }
+  }
+}
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.two-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}

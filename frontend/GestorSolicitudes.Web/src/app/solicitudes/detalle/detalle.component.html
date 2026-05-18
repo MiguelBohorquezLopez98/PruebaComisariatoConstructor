@@ -1,0 +1,145 @@
+<div class="page-container">
+  @if (loading) {
+    <div class="loading-center">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  }
+
+  @if (!loading && !solicitud) {
+    <div class="empty-state">
+      <mat-icon class="icon-error">error_outline</mat-icon>
+      <p>Solicitud no encontrada.</p>
+      <button mat-stroked-button routerLink="/solicitudes">Volver al listado</button>
+    </div>
+  }
+
+  @if (!loading && solicitud) {
+    <div class="page-header">
+      <div class="page-title-group">
+        <button mat-icon-button routerLink="/solicitudes" matTooltip="Volver al listado">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div>
+          <h1>{{ solicitud.codigo }}</h1>
+          <p class="subtitle">{{ solicitud.titulo }}</p>
+        </div>
+      </div>
+      @if (solicitud.estado !== EstadoSolicitud.Cerrada && solicitud.estado !== EstadoSolicitud.Cancelada) {
+        <button mat-raised-button color="primary" [routerLink]="['/solicitudes/editar', solicitud.id]">
+          <mat-icon>edit</mat-icon>
+          Editar
+        </button>
+      }
+    </div>
+
+    <mat-card class="detalle-card">
+      <mat-card-header>
+        <mat-card-title>Informacion de la solicitud</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Estado</span>
+            <p class="info-value">{{ getEstadoLabel(solicitud.estado) }}</p>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Prioridad</span>
+            <p class="info-value">{{ getPrioridadLabel(solicitud.prioridad) }}</p>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Area</span>
+            <p class="info-value">{{ getAreaLabel(solicitud.area) }}</p>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Responsable</span>
+            <p class="info-value">{{ solicitud.responsable || '—' }}</p>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Fecha de creacion</span>
+            <p class="info-value">{{ solicitud.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</p>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Fecha de vencimiento</span>
+            <p class="info-value">
+              {{ solicitud.fechaVencimiento ? (solicitud.fechaVencimiento | date:'dd/MM/yyyy') : '—' }}
+            </p>
+          </div>
+          @if (solicitud.fechaCierre) {
+            <div class="info-item">
+              <span class="info-label">Fecha de cierre</span>
+              <p class="info-value">{{ solicitud.fechaCierre | date:'dd/MM/yyyy HH:mm' }}</p>
+            </div>
+          }
+        </div>
+        <mat-divider class="divider"></mat-divider>
+        <span class="info-label">Descripcion</span>
+        <p class="descripcion">{{ solicitud.descripcion }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    @if (solicitud.estado !== EstadoSolicitud.Cerrada && solicitud.estado !== EstadoSolicitud.Cancelada) {
+      <mat-card class="estado-card">
+        <mat-card-header>
+          <mat-card-title>Cambiar estado</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <form [formGroup]="estadoForm" (ngSubmit)="cambiarEstado()" class="estado-form">
+            <mat-form-field appearance="outline">
+              <mat-label>Nuevo estado</mat-label>
+              <mat-select formControlName="nuevoEstado">
+                @for (op of estadoOpciones; track op.valor) {
+                  <mat-option [value]="op.valor">{{ op.label }}</mat-option>
+                }
+              </mat-select>
+              <mat-error>Selecciona un estado</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="observacion-field">
+              <mat-label>Observacion (opcional)</mat-label>
+              <input matInput formControlName="observacion" />
+            </mat-form-field>
+
+            <button
+              mat-raised-button
+              color="accent"
+              type="submit"
+              [disabled]="estadoForm.invalid || cambiandoEstado"
+            >
+              @if (cambiandoEstado) {
+                <mat-spinner diameter="20"></mat-spinner>
+              } @else {
+                Actualizar estado
+              }
+            </button>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    @if (solicitud.historial && solicitud.historial.length > 0) {
+      <mat-card class="historial-card">
+        <mat-card-header>
+          <mat-card-title>Historial de estados</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          @for (h of solicitud.historial; track h.id) {
+            <div class="historial-item">
+              <div class="historial-estados">
+                <span class="historial-estado">
+                  <strong>{{ getEstadoLabel(h.estadoAnterior) }}</strong>
+                  <mat-icon class="arrow-icon">arrow_forward</mat-icon>
+                  <strong>{{ getEstadoLabel(h.estadoNuevo) }}</strong>
+                </span>
+                <span class="historial-fecha">{{ h.fechaCambio | date:'dd/MM/yyyy HH:mm' }}</span>
+              </div>
+              <div class="historial-meta">Por: {{ h.cambiadoPor }}</div>
+              @if (h.observacion) {
+                <div class="historial-observacion">"{{ h.observacion }}"</div>
+              }
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    }
+  }
+</div>

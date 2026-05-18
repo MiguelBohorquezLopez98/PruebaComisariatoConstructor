@@ -5,7 +5,7 @@ namespace GestorSolicitudes.API.Services.Interfaces;
 
 public interface ISolicitudService
 {
-    Task<object> GetAllAsync(string? estado, string? prioridad, string? texto, int page, int pageSize);
+    Task<object> GetAllAsync(int? estado, int? prioridad, string? texto, int page, int pageSize);
     Task<Solicitud?> GetByIdAsync(int id);
     Task<Solicitud> CreateAsync(CrearSolicitudDto dto);
     Task<Solicitud?> UpdateAsync(int id, CrearSolicitudDto dto);

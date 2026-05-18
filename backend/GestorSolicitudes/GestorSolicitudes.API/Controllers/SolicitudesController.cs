@@ -19,7 +19,7 @@ public class SolicitudesController : ControllerBase
 
     [HttpGet]
     public async Task<IActionResult> GetAll(
-        [FromQuery] string? estado, [FromQuery] string? prioridad,
+        [FromQuery] int? estado, [FromQuery] int? prioridad,
         [FromQuery] string? texto,
         [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {

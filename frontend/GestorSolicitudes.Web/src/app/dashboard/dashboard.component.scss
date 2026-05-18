@@ -1,0 +1,143 @@
+.dashboard-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+
+  h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 500;
+  }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.welcome-text {
+  color: #555;
+  font-size: 14px;
+}
+
+.loading-center {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 0;
+  color: #777;
+  gap: 12px;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 15px;
+  }
+}
+
+.icon-error {
+  color: #c62828;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  mat-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px;
+    gap: 8px;
+
+    mat-icon {
+      font-size: 36px;
+      width: 36px;
+      height: 36px;
+    }
+  }
+
+  &.total mat-icon     { color: #1565c0; }
+  &.abiertas mat-icon  { color: #f57c00; }
+  &.criticas mat-icon  { color: #c62828; }
+  &.vencidas mat-icon  { color: #6a1a6a; }
+  &.cerradas mat-icon  { color: #2e7d32; }
+}
+
+.stat-value {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.solicitudes-section {
+  h2 {
+    margin: 0 0 16px;
+    font-size: 20px;
+    font-weight: 500;
+  }
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.fila-critica {
+  background-color: #fff3e0;
+}
+
+.fila-vencida {
+  background-color: #fce4ec;
+}
+
+.chip-prioridad {
+  font-size: 12px;
+  min-height: 24px;
+  padding: 0 8px;
+}
+
+/* chip-0 = Baja, chip-1 = Media, chip-2 = Alta, chip-3 = Critica */
+.chip-0 { background-color: #e8f5e9 !important; color: #2e7d32 !important; }
+.chip-1 { background-color: #e3f2fd !important; color: #1565c0 !important; }
+.chip-2 { background-color: #fff3e0 !important; color: #e65100 !important; }
+.chip-3 { background-color: #ffebee !important; color: #c62828 !important; }

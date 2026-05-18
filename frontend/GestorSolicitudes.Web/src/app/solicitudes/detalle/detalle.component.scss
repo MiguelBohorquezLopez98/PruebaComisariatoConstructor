@@ -1,0 +1,160 @@
+.page-container {
+  padding: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+
+  h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 500;
+  }
+}
+
+.page-title-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.loading-center {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 0;
+  color: #777;
+  gap: 12px;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+  }
+
+  p { margin: 0; }
+}
+
+.icon-error {
+  color: #c62828;
+}
+
+.detalle-card,
+.estado-card,
+.historial-card {
+  margin-bottom: 16px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 16px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-label {
+  color: #666;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.info-value {
+  margin: 4px 0 0;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.divider {
+  margin: 16px 0;
+}
+
+.descripcion {
+  margin-top: 8px;
+  white-space: pre-wrap;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.estado-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+  padding-top: 16px;
+}
+
+.observacion-field {
+  flex: 1;
+  min-width: 220px;
+}
+
+.historial-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.historial-estados {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.historial-estado {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.arrow-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+}
+
+.historial-fecha {
+  color: #666;
+  font-size: 13px;
+}
+
+.historial-meta {
+  font-size: 13px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.historial-observacion {
+  font-size: 13px;
+  margin-top: 4px;
+  font-style: italic;
+  color: #444;
+}

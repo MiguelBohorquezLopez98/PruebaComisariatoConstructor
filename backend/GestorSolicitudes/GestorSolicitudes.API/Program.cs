@@ -73,12 +73,27 @@ builder.Services.AddSwaggerGen(c => {
 
 var app = builder.Build();
 
+// CORS manual: agrega headers en TODA respuesta y cortocircuita OPTIONS
+app.Use(async (context, next) =>
+{
+    context.Response.Headers["Access-Control-Allow-Origin"] = "http://localhost:4200";
+    context.Response.Headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type";
+    context.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS";
+
+    if (context.Request.Method == "OPTIONS")
+    {
+        context.Response.StatusCode = 204;
+        return;
+    }
+
+    await next();
+});
+
 // Middleware de errores global
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseSwagger();
 app.UseSwaggerUI();
-app.UseCors("AllowAngular");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<TokenVersionMiddleware>();

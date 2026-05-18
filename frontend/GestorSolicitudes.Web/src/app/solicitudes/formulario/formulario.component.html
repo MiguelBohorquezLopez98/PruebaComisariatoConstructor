@@ -1,0 +1,112 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-title-group">
+      <button mat-icon-button routerLink="/solicitudes" matTooltip="Volver al listado">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h1>{{ esEdicion ? 'Editar solicitud' : 'Nueva solicitud' }}</h1>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading-center">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  }
+
+  @if (!loading) {
+    @if (esCerrada) {
+      <mat-card class="aviso-cerrada">
+        <mat-card-content>
+          <mat-icon>lock</mat-icon>
+          <span>Esta solicitud esta cerrada y no puede ser editada.</span>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>
+          {{ esEdicion ? 'Datos de la solicitud' : 'Datos de la nueva solicitud' }}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="guardar()" class="form-grid">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Titulo</mat-label>
+            <input matInput formControlName="titulo" maxlength="120" />
+            <mat-hint align="end">{{ form.get('titulo')?.value?.length || 0 }}/120</mat-hint>
+            <mat-error>
+              @if (form.get('titulo')?.hasError('required')) {
+                El titulo es obligatorio
+              } @else if (form.get('titulo')?.hasError('maxlength')) {
+                Maximo 120 caracteres
+              }
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Descripcion</mat-label>
+            <textarea matInput formControlName="descripcion" rows="4"></textarea>
+            <mat-error>La descripcion es obligatoria</mat-error>
+          </mat-form-field>
+
+          <div class="two-cols">
+            <mat-form-field appearance="outline">
+              <mat-label>Area</mat-label>
+              <mat-select formControlName="area">
+                @for (a of areas; track a.valor) {
+                  <mat-option [value]="a.valor">{{ a.label }}</mat-option>
+                }
+              </mat-select>
+              <mat-error>Selecciona un area</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Prioridad</mat-label>
+              <mat-select formControlName="prioridad">
+                @for (p of prioridades; track p.valor) {
+                  <mat-option [value]="p.valor">{{ p.label }}</mat-option>
+                }
+              </mat-select>
+              <mat-error>Selecciona una prioridad</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="two-cols">
+            <mat-form-field appearance="outline">
+              <mat-label>Responsable (opcional)</mat-label>
+              <input matInput formControlName="responsable" maxlength="100" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Fecha de vencimiento (opcional)</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="fechaVencimiento" />
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          </div>
+
+          <div class="form-actions">
+            <button mat-stroked-button type="button" routerLink="/solicitudes" [disabled]="guardando">
+              Cancelar
+            </button>
+            <button
+              mat-raised-button
+              color="primary"
+              type="submit"
+              [disabled]="guardando || esCerrada"
+            >
+              @if (guardando) {
+                <mat-spinner diameter="20"></mat-spinner>
+              } @else {
+                <mat-icon>save</mat-icon>
+                {{ esEdicion ? 'Guardar cambios' : 'Crear solicitud' }}
+              }
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

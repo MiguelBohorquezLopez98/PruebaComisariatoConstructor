@@ -1,0 +1,105 @@
+.page-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+
+  h1 {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 500;
+  }
+}
+
+.page-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filtros-card {
+  margin-bottom: 24px;
+}
+
+.filtros-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-top: 8px;
+
+  mat-form-field {
+    flex: 1;
+    min-width: 200px;
+  }
+}
+
+.loading-center {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 0;
+  color: #777;
+  gap: 12px;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 15px;
+  }
+}
+
+.icon-error {
+  color: #c62828;
+}
+
+.table-card {
+  overflow: hidden;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.acciones-cell {
+  white-space: nowrap;
+}
+
+.fila-critica {
+  background-color: #fff3e0;
+}
+
+.fila-vencida {
+  background-color: #fce4ec;
+}
+
+.chip-prioridad {
+  font-size: 12px;
+  min-height: 24px;
+  padding: 0 8px;
+}
+
+.chip-0 { background-color: #e8f5e9 !important; color: #2e7d32 !important; }
+.chip-1 { background-color: #e3f2fd !important; color: #1565c0 !important; }
+.chip-2 { background-color: #fff3e0 !important; color: #e65100 !important; }
+.chip-3 { background-color: #ffebee !important; color: #c62828 !important; }
