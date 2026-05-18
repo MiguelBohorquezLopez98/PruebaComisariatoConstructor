@@ -6,7 +6,7 @@ services:
     container_name: gestor_sqlserver
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=GestorPass!2024
+      - SA_PASSWORD=${SA_PASSWORD}
       - MSSQL_PID=Express
     ports:
       - "1433:1433"
@@ -15,7 +15,7 @@ services:
     networks:
       - gestor-net
     healthcheck:
-      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "GestorPass!2024" -Q "SELECT 1" -b -C -o /dev/null || exit 1
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "${SA_PASSWORD}" -Q "SELECT 1" -b -C -o /dev/null || exit 1
       interval: 10s
       retries: 10
       start_period: 40s
@@ -30,6 +30,9 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=GestorSolicitudesDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;
+      - Jwt__Key=${JWT_KEY}
+      - CorsOrigin=http://localhost
     depends_on:
       sqlserver:
         condition: service_healthy

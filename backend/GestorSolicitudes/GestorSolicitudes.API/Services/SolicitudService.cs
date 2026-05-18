@@ -42,18 +42,9 @@ public class SolicitudService : ISolicitudService
 
     public async Task<Solicitud> CreateAsync(CrearSolicitudDto dto)
     {
-        var ultimo = await _db.Solicitudes
-            .OrderByDescending(s => s.Id).FirstOrDefaultAsync();
-        int siguiente = 1;
-        if (ultimo != null)
-        {
-            var partes = ultimo.Codigo.Split('-');
-            if (partes.Length == 3 && int.TryParse(partes[2], out int num))
-                siguiente = num + 1;
-        }
         var solicitud = new Solicitud
         {
-            Codigo = $"SOL-{DateTime.UtcNow.Year}-{siguiente:D4}",
+            Codigo = string.Empty,
             Titulo = dto.Titulo,
             Descripcion = dto.Descripcion,
             Area = dto.Area,
@@ -64,7 +55,11 @@ public class SolicitudService : ISolicitudService
             Estado = EstadoSolicitud.Nueva
         };
         _db.Solicitudes.Add(solicitud);
+        await _db.SaveChangesAsync(); // SQL Server genera el Id IDENTITY
+
+        solicitud.Codigo = $"SOL-{DateTime.UtcNow.Year}-{solicitud.Id:D4}";
         await _db.SaveChangesAsync();
+
         _logger.LogInformation("Solicitud creada: {Codigo}", solicitud.Codigo);
         return solicitud;
     }

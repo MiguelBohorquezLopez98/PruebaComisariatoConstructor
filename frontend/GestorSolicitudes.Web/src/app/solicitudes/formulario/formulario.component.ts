@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -38,6 +39,8 @@ import { AreaSolicitud, EstadoSolicitud, PrioridadSolicitud } from '../../shared
   styleUrl: './formulario.component.scss',
 })
 export class FormularioComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
+
   form!: FormGroup;
   loading = false;
   guardando = false;
@@ -77,28 +80,31 @@ export class FormularioComponent implements OnInit {
       this.esEdicion = true;
       this.solicitudId = +id;
       this.loading = true;
-      this.service.getById(+id).subscribe({
-        next: (s) => {
-          this.loading = false;
-          if (s.estado === EstadoSolicitud.Cerrada) {
-            this.esCerrada = true;
-            this.form.disable();
-          }
-          this.form.patchValue({
-            titulo: s.titulo,
-            descripcion: s.descripcion,
-            area: s.area,
-            prioridad: s.prioridad,
-            responsable: s.responsable,
-            fechaVencimiento: s.fechaVencimiento ? new Date(s.fechaVencimiento) : null,
-          });
-          this.cdr.detectChanges();
-        },
-        error: () => {
-          this.loading = false;
-          this.cdr.detectChanges();
-        },
-      });
+      this.service
+        .getById(+id)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (s) => {
+            this.loading = false;
+            if (s.estado === EstadoSolicitud.Cerrada) {
+              this.esCerrada = true;
+              this.form.disable();
+            }
+            this.form.patchValue({
+              titulo: s.titulo,
+              descripcion: s.descripcion,
+              area: s.area,
+              prioridad: s.prioridad,
+              responsable: s.responsable,
+              fechaVencimiento: s.fechaVencimiento ? new Date(s.fechaVencimiento) : null,
+            });
+            this.cdr.detectChanges();
+          },
+          error: () => {
+            this.loading = false;
+            this.cdr.detectChanges();
+          },
+        });
     }
   }
 
@@ -116,7 +122,7 @@ export class FormularioComponent implements OnInit {
       ? this.service.update(this.solicitudId!, datos)
       : this.service.create(datos);
 
-    obs.subscribe({
+    obs.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (s) => {
         this.guardando = false;
         this.snackBar.open('Solicitud guardada correctamente', 'OK', { duration: 3000 });

@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -45,6 +46,8 @@ import {
   styleUrl: './detalle.component.scss',
 })
 export class DetalleComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
+
   solicitud: Solicitud | null = null;
   loading = true;
   cambiandoEstado = false;
@@ -88,17 +91,20 @@ export class DetalleComponent implements OnInit {
 
   private cargar(id: number): void {
     this.loading = true;
-    this.service.getById(id).subscribe({
-      next: (s) => {
-        this.solicitud = s;
-        this.loading = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.loading = false;
-        this.cdr.detectChanges();
-      },
-    });
+    this.service
+      .getById(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (s) => {
+          this.solicitud = s;
+          this.loading = false;
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.loading = false;
+          this.cdr.detectChanges();
+        },
+      });
   }
 
   cambiarEstado(): void {
@@ -110,6 +116,7 @@ export class DetalleComponent implements OnInit {
         nuevoEstado: +this.estadoForm.value.nuevoEstado,
         observacion: this.estadoForm.value.observacion || undefined,
       })
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.estadoForm.reset();
