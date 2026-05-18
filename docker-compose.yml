@@ -1,0 +1,57 @@
+services:
+
+  # ── Base de datos SQL Server ─────────────────────────────────────────────────
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: gestor_sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=GestorPass!2024
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqldata:/var/opt/mssql
+    networks:
+      - gestor-net
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "GestorPass!2024" -Q "SELECT 1" -b -C -o /dev/null || exit 1
+      interval: 10s
+      retries: 10
+      start_period: 40s
+      timeout: 5s
+
+  # ── API .NET 8 ───────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend/GestorSolicitudes/GestorSolicitudes.API
+      dockerfile: Dockerfile
+    container_name: gestor_backend
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - gestor-net
+
+  # ── Angular + Nginx ──────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend/GestorSolicitudes.Web
+      dockerfile: Dockerfile
+    container_name: gestor_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - gestor-net
+
+networks:
+  gestor-net:
+    driver: bridge
+
+volumes:
+  sqldata:

@@ -76,7 +76,8 @@ var app = builder.Build();
 // CORS manual: agrega headers en TODA respuesta y cortocircuita OPTIONS
 app.Use(async (context, next) =>
 {
-    context.Response.Headers["Access-Control-Allow-Origin"] = "http://localhost:4200";
+    var corsOrigin = app.Configuration["CorsOrigin"] ?? "http://localhost:4200";
+    context.Response.Headers["Access-Control-Allow-Origin"] = corsOrigin;
     context.Response.Headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type";
     context.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS";
 
@@ -103,4 +104,30 @@ app.MapGet("/health", () => Results.Ok(new {
     status = "ok", timestamp = DateTime.UtcNow }));
 
 app.MapControllers();
+
+// Migraciones automáticas y seed de usuarios iniciales
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+    if (!db.Usuarios.Any())
+    {
+        db.Usuarios.AddRange(
+            new GestorSolicitudes.API.Models.Usuario
+            {
+                NombreUsuario = "admin",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin1234!"),
+                Rol = "admin"
+            },
+            new GestorSolicitudes.API.Models.Usuario
+            {
+                NombreUsuario = "operador",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Operador1234!"),
+                Rol = "operador"
+            }
+        );
+        db.SaveChanges();
+    }
+}
+
 app.Run();

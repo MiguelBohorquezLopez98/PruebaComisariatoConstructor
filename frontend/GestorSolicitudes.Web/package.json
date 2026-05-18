@@ -18,10 +18,19 @@
     "@angular/forms": "^21.2.0",
     "@angular/material": "^21.2.11",
     "@angular/platform-browser": "^21.2.0",
+    "@angular/animations": "^21.2.0",
     "@angular/router": "^21.2.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "esbuild",
+      "lmdb",
+      "msgpackr-extract"
+    ]
   },
   "devDependencies": {
     "@angular/build": "^21.2.11",
