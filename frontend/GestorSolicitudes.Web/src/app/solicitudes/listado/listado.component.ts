@@ -1,10 +1,9 @@
 import {
   Component,
   OnInit,
+  OnDestroy,
   ChangeDetectorRef,
   ChangeDetectionStrategy,
-  DestroyRef,
-  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -13,13 +12,14 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelectModule, MatSelectChange } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Subscription } from 'rxjs';
 import { SolicitudService } from '../../core/services/solicitud.service';
 import {
   Solicitud,
@@ -27,9 +27,6 @@ import {
   AreaSolicitud,
   PrioridadSolicitud,
 } from '../../shared/models/solicitud.model';
-import { Subject, EMPTY } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-listado',
@@ -54,7 +51,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   templateUrl: './listado.component.html',
   styleUrl: './listado.component.scss',
 })
-export class ListadoComponent implements OnInit {
+export class ListadoComponent implements OnInit, OnDestroy {
   solicitudes: Solicitud[] = [];
   total = 0;
   page = 1;
@@ -84,92 +81,85 @@ export class ListadoComponent implements OnInit {
     { valor: 'Critica', label: 'Critica' },
   ];
 
-  filtros!: FormGroup;
+  filtros: FormGroup;
 
-  private readonly buscar$ = new Subject<void>();
-  private readonly destroyRef = inject(DestroyRef);
+  private cargandoSub: Subscription | null = null;
+  private textoTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     private service: SolicitudService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
-  ) {}
-
-  ngOnInit(): void {
+  ) {
     this.filtros = this.fb.group({
       texto: [''],
       estado: [''],
       prioridad: [''],
     });
+  }
 
-    // switchMap cancela el request anterior si llega uno nuevo
-    this.buscar$
-      .pipe(
-        switchMap(() => {
-          this.loading = true;
-          this.error = false;
+  ngOnInit(): void {
+    this.cargar();
+  }
+
+  ngOnDestroy(): void {
+    this.cargandoSub?.unsubscribe();
+    if (this.textoTimer) clearTimeout(this.textoTimer);
+  }
+
+  onTextoInput(): void {
+    if (this.textoTimer) clearTimeout(this.textoTimer);
+    this.textoTimer = setTimeout(() => {
+      this.page = 1;
+      this.cargar();
+    }, 400);
+  }
+
+  onEstadoChange(event: MatSelectChange): void {
+    this.page = 1;
+    this.cargar();
+  }
+
+  onPrioridadChange(event: MatSelectChange): void {
+    this.page = 1;
+    this.cargar();
+  }
+
+  cargar(): void {
+    this.cargandoSub?.unsubscribe();
+    this.loading = true;
+    this.error = false;
+    this.cdr.detectChanges();
+
+    const f = this.filtros.value as { texto: string; estado: string; prioridad: string };
+
+    this.cargandoSub = this.service
+      .getAll({
+        estado: f.estado || undefined,
+        prioridad: f.prioridad || undefined,
+        texto: f.texto || undefined,
+        page: this.page,
+        pageSize: this.pageSize,
+      })
+      .subscribe({
+        next: (res) => {
+          this.solicitudes = res.items;
+          this.total = res.total;
+          this.loading = false;
           this.cdr.detectChanges();
-          const f = this.filtros.value;
-          return this.service
-            .getAll({
-              estado: f.estado || undefined,
-              prioridad: f.prioridad || undefined,
-              texto: f.texto || undefined,
-              page: this.page,
-              pageSize: this.pageSize,
-            })
-            .pipe(
-              catchError(() => {
-                this.error = true;
-                this.loading = false;
-                this.cdr.detectChanges();
-                return EMPTY;
-              }),
-            );
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((res) => {
-        this.solicitudes = res.items;
-        this.total = res.total;
-        this.loading = false;
-        this.cdr.detectChanges();
+        },
+        error: () => {
+          this.error = true;
+          this.loading = false;
+          this.cdr.detectChanges();
+        },
       });
-
-    // Texto: espera 400ms después del último tecleo
-    this.filtros
-      .get('texto')!
-      .valueChanges.pipe(debounceTime(400), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this.page = 1;
-        this.buscar$.next();
-      });
-
-    // Dropdowns: reacción inmediata
-    this.filtros
-      .get('estado')!
-      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this.page = 1;
-        this.buscar$.next();
-      });
-
-    this.filtros
-      .get('prioridad')!
-      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this.page = 1;
-        this.buscar$.next();
-      });
-
-    // Carga inicial
-    this.buscar$.next();
   }
 
   onPage(event: PageEvent): void {
     this.page = event.pageIndex + 1;
     this.pageSize = event.pageSize;
-    this.buscar$.next();
+    this.cargar();
   }
 
   getAreaLabel(area: AreaSolicitud): string {

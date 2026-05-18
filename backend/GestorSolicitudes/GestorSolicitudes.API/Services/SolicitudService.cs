@@ -18,12 +18,14 @@ public class SolicitudService : ISolicitudService
         string? texto, int page, int pageSize)
     {
         var query = _db.Solicitudes.Include(s => s.Historial).AsQueryable();
+        _logger.LogInformation("Filtros recibidos: estado={Estado}, prioridad={Prioridad}, texto={Texto}",
+            estado ?? "null", prioridad ?? "null", texto ?? "null");
         if (!string.IsNullOrEmpty(estado) &&
-            Enum.TryParse<EstadoSolicitud>(estado, out var e))
-            query = query.Where(s => s.Estado == e);
+            Enum.TryParse<EstadoSolicitud>(estado, ignoreCase: true, out var estadoFiltro))
+            query = query.Where(s => s.Estado == estadoFiltro);
         if (!string.IsNullOrEmpty(prioridad) &&
-            Enum.TryParse<PrioridadSolicitud>(prioridad, out var p))
-            query = query.Where(s => s.Prioridad == p);
+            Enum.TryParse<PrioridadSolicitud>(prioridad, ignoreCase: true, out var prioridadFiltro))
+            query = query.Where(s => s.Prioridad == prioridadFiltro);
         if (!string.IsNullOrEmpty(texto))
             query = query.Where(s => s.Titulo.Contains(texto) ||
                                      s.Descripcion.Contains(texto));

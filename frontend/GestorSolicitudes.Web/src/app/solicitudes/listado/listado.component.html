@@ -17,14 +17,15 @@
       <form [formGroup]="filtros" class="filtros-form">
         <mat-form-field appearance="outline">
           <mat-label>Buscar</mat-label>
-          <input matInput formControlName="texto" placeholder="Titulo o descripcion" />
+          <input matInput formControlName="texto" placeholder="Titulo o descripcion"
+                 (input)="onTextoInput()" />
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Estado</mat-label>
-          <mat-select formControlName="estado">
-            @for (e of estadoOpciones; track e.valor) {
+          <mat-select formControlName="estado" (selectionChange)="onEstadoChange($event)">
+            @for (e of estadoOpciones; track $index) {
               <mat-option [value]="e.valor">{{ e.label }}</mat-option>
             }
           </mat-select>
@@ -32,8 +33,8 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Prioridad</mat-label>
-          <mat-select formControlName="prioridad">
-            @for (p of prioridadOpciones; track p.valor) {
+          <mat-select formControlName="prioridad" (selectionChange)="onPrioridadChange($event)">
+            @for (p of prioridadOpciones; track $index) {
               <mat-option [value]="p.valor">{{ p.label }}</mat-option>
             }
           </mat-select>
